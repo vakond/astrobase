@@ -1,4 +1,4 @@
-//! astrobase-server server implementation.
+//! astrobase-server implementation.
 
 pub mod api {
     tonic::include_proto!("api");

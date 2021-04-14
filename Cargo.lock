@@ -31,10 +31,11 @@ name = "astrobase-client"
 version = "0.0.1"
 dependencies = [
  "anyhow",
- "serde",
- "serde_json",
+ "prost",
  "structopt",
  "tokio",
+ "tonic",
+ "tonic-build",
  "tracing",
  "tracing-subscriber",
 ]

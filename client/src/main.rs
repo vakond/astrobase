@@ -23,20 +23,21 @@ fn init_logger() {
 
 /// Dispatches CLI commands.
 fn execute(app: cli::Application) -> anyhow::Result<()> {
+    let endpoint = app.endpoint.unwrap_or("http://[::1]:50051".into());
     let rt = tokio::runtime::Runtime::new()?;
 
     match app.cmd {
-        cli::Command::Get => {
-            rt.block_on(command::get())?;
+        cli::Command::Get { key } => {
+            rt.block_on(command::get(endpoint, key))?;
         }
-        cli::Command::Insert => {
-            rt.block_on(command::insert())?;
+        cli::Command::Insert { key, value } => {
+            rt.block_on(command::insert(endpoint, key, value))?;
         }
-        cli::Command::Delete => {
-            rt.block_on(command::delete())?;
+        cli::Command::Delete { key } => {
+            rt.block_on(command::delete(endpoint, key))?;
         }
-        cli::Command::Update => {
-            rt.block_on(command::update())?;
+        cli::Command::Update { key, value } => {
+            rt.block_on(command::update(endpoint, key, value))?;
         }
     }
 
