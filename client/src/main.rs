@@ -5,6 +5,7 @@
 
 mod cli;
 mod command;
+mod config;
 
 fn main() {
     init_logger();
@@ -23,7 +24,7 @@ fn init_logger() {
 
 /// Dispatches CLI commands.
 fn execute(app: cli::Application) -> anyhow::Result<()> {
-    let endpoint = app.endpoint.unwrap_or("http://[::1]:50051".into());
+    let endpoint = app.endpoint;
     let rt = tokio::runtime::Runtime::new()?;
 
     match app.cmd {

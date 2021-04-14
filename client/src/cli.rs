@@ -1,5 +1,6 @@
 //! astrobase-client options parser.
 
+use crate::config;
 use structopt::StructOpt;
 
 #[derive(StructOpt)]
@@ -9,9 +10,10 @@ pub struct Application {
         parse(from_str),
         short,
         long,
-        help = "Endpoint of the server (default: http://[::1]:50051)"
+        default_value = &config::DEFAULT_ENDPOINT,
+        help = "The service endpoint"
     )]
-    pub endpoint: Option<String>,
+    pub endpoint: String,
 
     #[structopt(subcommand)]
     pub cmd: Command,

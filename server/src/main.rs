@@ -5,6 +5,7 @@
 
 mod cli;
 mod config;
+mod database;
 mod server;
 
 fn main() {

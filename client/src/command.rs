@@ -6,16 +6,20 @@ pub mod api {
 
 use api::{astrobase_client, Key, Pair};
 use tonic::Request;
-use tracing::info;
+use tracing::{info, warn};
 
 /// Calls RPC-method `Get`.
 pub async fn get(endpoint: String, key: String) -> anyhow::Result<()> {
-    info!("get");
+    ensure_key_valid(&key)?;
 
-    let req = Request::new(Key { key });
+    let req = Request::new(Key { key: key.clone() });
     let mut caller = astrobase_client::AstrobaseClient::connect(endpoint).await?;
     let resp = caller.get(req).await?.into_inner();
-    dbg!(&resp);
+    if resp.ok {
+        info!("key: {}, value: {}", key, resp.info);
+    } else {
+        warn!("{}", resp.info);
+    }
 
     Ok(())
 }
@@ -23,6 +27,9 @@ pub async fn get(endpoint: String, key: String) -> anyhow::Result<()> {
 /// Calls RPC-method `Insert`.
 pub async fn insert(endpoint: String, key: String, value: String) -> anyhow::Result<()> {
     info!("insert");
+
+    ensure_key_valid(&key)?;
+    ensure_value_valid(&value)?;
 
     let req = Request::new(Pair { key, value });
     let mut caller = astrobase_client::AstrobaseClient::connect(endpoint).await?;
@@ -36,6 +43,8 @@ pub async fn insert(endpoint: String, key: String, value: String) -> anyhow::Res
 pub async fn delete(endpoint: String, key: String) -> anyhow::Result<()> {
     info!("delete");
 
+    ensure_key_valid(&key)?;
+
     let req = Request::new(Key { key });
     let mut caller = astrobase_client::AstrobaseClient::connect(endpoint).await?;
     let resp = caller.delete(req).await?.into_inner();
@@ -48,10 +57,31 @@ pub async fn delete(endpoint: String, key: String) -> anyhow::Result<()> {
 pub async fn update(endpoint: String, key: String, value: String) -> anyhow::Result<()> {
     info!("update");
 
+    ensure_key_valid(&key)?;
+    ensure_value_valid(&value)?;
+
     let req = Request::new(Pair { key, value });
     let mut caller = astrobase_client::AstrobaseClient::connect(endpoint).await?;
     let resp = caller.update(req).await?.into_inner();
     dbg!(&resp);
 
+    Ok(())
+}
+
+use anyhow::anyhow;
+
+/// Checks the length of a key is below the limit.
+fn ensure_key_valid(key: &str) -> anyhow::Result<()> {
+    if key.len() > crate::config::MAX_KEY_LEN {
+        return Err(anyhow!("key is too long: {}", key.len()));
+    }
+    Ok(())
+}
+
+/// Checks the length of a value is below the limit.
+fn ensure_value_valid(value: &str) -> anyhow::Result<()> {
+    if value.len() > crate::config::MAX_VALUE_LEN {
+        return Err(anyhow!("value is too long: {}", value.len()));
+    }
     Ok(())
 }
