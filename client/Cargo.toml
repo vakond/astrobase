@@ -4,6 +4,10 @@ version = "0.0.1"
 authors = ["Vasily Kondratyev <wassily.kondratiev@gmail.com>"]
 edition = "2018"
 
+[[bin]]
+name = "cli"
+path = "src/main.rs"
+
 [dependencies]
 anyhow = "1.0.40"
 serde = { version = "1.0.118", features = ["derive"] }

@@ -1,9 +1,0 @@
-{
-    "environment": "proof-of-concept",
-    "server": {
-        "endpoint": "http://[::1]:50051"
-    },
-    "monitoring": {
-        "interval": 60
-    }
-}

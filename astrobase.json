@@ -1,0 +1,9 @@
+{
+    "environment": "proof-of-concept",
+    "server": {
+        "endpoint": "[::1]:50051"
+    },
+    "ticker": {
+        "interval": 5
+    }
+}

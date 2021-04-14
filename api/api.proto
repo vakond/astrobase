@@ -14,13 +14,13 @@ message Pair {
 }
 
 message Output {
-    string value = 1;
-    string error = 2;
+    bool ok = 1;
+    string info = 2;
 }
 
 service Astrobase {
-    rpc Get (Key) returns (Output) {}
-    rpc Insert (Pair) returns (Output) {}
-    rpc Delete (Key) returns (Output) {}
-    rpc Update (Pair) returns (Output) {}
+    rpc Get(Key) returns (Output) {}
+    rpc Insert(Pair) returns (Output) {}
+    rpc Delete(Key) returns (Output) {}
+    rpc Update(Pair) returns (Output) {}
 }

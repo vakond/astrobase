@@ -5,7 +5,6 @@
 
 mod cli;
 mod config;
-mod monitoring;
 mod server;
 
 fn main() {
@@ -37,9 +36,9 @@ fn execute(app: cli::Application) -> anyhow::Result<()> {
     Ok(())
 }
 
-/// Runs both workers: server and monitoring to show statistics.
+/// Runs the server.
 async fn run(config_file: &std::path::Path) -> anyhow::Result<()> {
     let cfg = config::Astrobase::load(config_file);
-    tokio::try_join!(server::run(&cfg.server), monitoring::run(&cfg.monitoring))?;
+    server::run(cfg).await?;
     Ok(())
 }

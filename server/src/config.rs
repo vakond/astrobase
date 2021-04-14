@@ -9,10 +9,10 @@ pub struct Server {
     pub endpoint: String,
 }
 
-/// Represents the monitoring config.
+/// Represents the ticker config.
 #[derive(Debug, Default, Serialize, Deserialize)]
-pub struct Monitoring {
-    pub interval: u64,
+pub struct Ticker {
+    pub interval: u64, // seconds
 }
 
 /// Represents the main config.
@@ -20,7 +20,7 @@ pub struct Monitoring {
 pub struct Astrobase {
     pub environment: String,
     pub server: Server,
-    pub monitoring: Monitoring,
+    pub ticker: Ticker,
 }
 
 /// Implements construction of the config.
