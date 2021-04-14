@@ -24,7 +24,7 @@ impl Stats {
     }
 
     /// Updates the GET stats.
-    pub async fn get_ok(&self, ok: bool) {
+    pub async fn get(&self, ok: bool) {
         let mut ok_fail = self.get_ok_fail.write().await;
         if ok {
             ok_fail.0 += 1
@@ -34,7 +34,7 @@ impl Stats {
     }
 
     /// Updates the INSERT stats (may increment number of records).
-    pub async fn insert_ok(&self, ok: bool) {
+    pub async fn insert(&self, ok: bool) {
         let mut ok_fail = self.insert_ok_fail.write().await;
         if ok {
             let mut count = self.number_of_records.write().await;
@@ -46,7 +46,7 @@ impl Stats {
     }
 
     /// Updates the DELETE stats (may decrement number of records).
-    pub async fn delete_ok(&self, ok: bool) {
+    pub async fn delete(&self, ok: bool) {
         let mut ok_fail = self.delete_ok_fail.write().await;
         if ok {
             let mut count = self.number_of_records.write().await;
@@ -58,7 +58,7 @@ impl Stats {
     }
 
     /// Updates the UPDATE stats.
-    pub async fn update_ok(&self, ok: bool) {
+    pub async fn update(&self, ok: bool) {
         let mut ok_fail = self.update_ok_fail.write().await;
         if ok {
             ok_fail.0 += 1
@@ -69,11 +69,11 @@ impl Stats {
 
     /// Dumps the data to stderr.
     pub async fn dump(&self) {
-        let n = { self.number_of_records.read().await };
-        let get = { self.get_ok_fail.read().await };
-        let ins = { self.insert_ok_fail.read().await };
-        let del = { self.delete_ok_fail.read().await };
-        let upd = { self.update_ok_fail.read().await };
+        let n = self.number_of_records.read().await;
+        let get = self.get_ok_fail.read().await;
+        let ins = self.insert_ok_fail.read().await;
+        let del = self.delete_ok_fail.read().await;
+        let upd = self.update_ok_fail.read().await;
         eprintln!("NR: {},    GET(ok/fail): {:?},    INSERT(ok/fail): {:?},    DELETE(ok/fail): {:?},    UPDATE(ok/fail): {:?}",
                   n, get, ins, del, upd);
     }

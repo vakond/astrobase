@@ -11,6 +11,8 @@ use tracing::info;
 
 /// Starts the server in listening mode.
 pub async fn run(cfg: config::Astrobase) -> anyhow::Result<()> {
+    use anyhow::Context as _;
+
     let service = Service::new();
 
     let stats = service.stats.clone();
@@ -27,7 +29,7 @@ pub async fn run(cfg: config::Astrobase) -> anyhow::Result<()> {
     let endpoint = cfg.server.endpoint.clone();
     transport::Server::builder()
         .add_service(astrobase_server::AstrobaseServer::new(service))
-        .serve(endpoint.parse()?)
+        .serve(endpoint.parse().context(endpoint)?)
         .await?;
 
     Ok(())
@@ -61,7 +63,7 @@ impl astrobase_server::Astrobase for Service {
         let key = &req.get_ref().key;
         let r = self.db.get(key).await;
         let ok = r.is_ok();
-        self.stats.get_ok(ok).await;
+        self.stats.get(ok).await;
         let info = if ok {
             r.unwrap()
         } else {
@@ -76,7 +78,7 @@ impl astrobase_server::Astrobase for Service {
         let value = &req.get_ref().value;
         let r = self.db.insert(key, value).await;
         let ok = r.is_ok();
-        self.stats.insert_ok(ok).await;
+        self.stats.insert(ok).await;
         let info = if ok {
             r.unwrap()
         } else {
@@ -90,7 +92,7 @@ impl astrobase_server::Astrobase for Service {
         let key = &req.get_ref().key;
         let r = self.db.delete(key).await;
         let ok = r.is_ok();
-        self.stats.delete_ok(ok).await;
+        self.stats.delete(ok).await;
         let info = if ok {
             r.unwrap()
         } else {
@@ -105,7 +107,7 @@ impl astrobase_server::Astrobase for Service {
         let value = &req.get_ref().value;
         let r = self.db.update(key, value).await;
         let ok = r.is_ok();
-        self.stats.update_ok(ok).await;
+        self.stats.update(ok).await;
         let info = if ok {
             r.unwrap()
         } else {

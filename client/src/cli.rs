@@ -4,7 +4,7 @@ use crate::config;
 use structopt::StructOpt;
 
 #[derive(StructOpt)]
-#[structopt(about = "Key-value database")]
+#[structopt(about = "Astrobase key-value database client")]
 pub struct Application {
     #[structopt(
         parse(from_str),

@@ -10,7 +10,7 @@ pub enum Command {
 }
 
 #[derive(StructOpt)]
-#[structopt(about = "Astrobase server")]
+#[structopt(about = "Astrobase key-value database server")]
 pub struct Application {
     #[structopt(
         parse(from_os_str),
