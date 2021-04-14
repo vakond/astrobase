@@ -26,44 +26,56 @@ pub async fn get(endpoint: String, key: String) -> anyhow::Result<()> {
 
 /// Calls RPC-method `Insert`.
 pub async fn insert(endpoint: String, key: String, value: String) -> anyhow::Result<()> {
-    info!("insert");
-
     ensure_key_valid(&key)?;
     ensure_value_valid(&value)?;
 
-    let req = Request::new(Pair { key, value });
+    let req = Request::new(Pair {
+        key: key.clone(),
+        value: value.clone(),
+    });
     let mut caller = astrobase_client::AstrobaseClient::connect(endpoint).await?;
     let resp = caller.insert(req).await?.into_inner();
-    dbg!(&resp);
+    if resp.ok {
+        info!("key: {}, value: {}", key, value);
+    } else {
+        warn!("{}", resp.info);
+    }
 
     Ok(())
 }
 
 /// Calls RPC-method `Delete`.
 pub async fn delete(endpoint: String, key: String) -> anyhow::Result<()> {
-    info!("delete");
-
     ensure_key_valid(&key)?;
 
-    let req = Request::new(Key { key });
+    let req = Request::new(Key { key: key.clone() });
     let mut caller = astrobase_client::AstrobaseClient::connect(endpoint).await?;
     let resp = caller.delete(req).await?.into_inner();
-    dbg!(&resp);
+    if resp.ok {
+        info!("key: {}, value: {}", key, resp.info);
+    } else {
+        warn!("{}", resp.info);
+    }
 
     Ok(())
 }
 
 /// Calls RPC-method `Update`.
 pub async fn update(endpoint: String, key: String, value: String) -> anyhow::Result<()> {
-    info!("update");
-
     ensure_key_valid(&key)?;
     ensure_value_valid(&value)?;
 
-    let req = Request::new(Pair { key, value });
+    let req = Request::new(Pair {
+        key: key.clone(),
+        value: value.clone(),
+    });
     let mut caller = astrobase_client::AstrobaseClient::connect(endpoint).await?;
     let resp = caller.update(req).await?.into_inner();
-    dbg!(&resp);
+    if resp.ok {
+        info!("key: {}, value: {}", key, value);
+    } else {
+        warn!("{}", resp.info);
+    }
 
     Ok(())
 }

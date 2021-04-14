@@ -7,6 +7,7 @@ mod cli;
 mod config;
 mod database;
 mod server;
+mod stats;
 
 fn main() {
     init_logger();

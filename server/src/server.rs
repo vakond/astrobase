@@ -19,7 +19,7 @@ pub async fn run(cfg: config::Astrobase) -> anyhow::Result<()> {
         let interrupted = false;
         while !interrupted {
             tokio::time::sleep(interval).await;
-            stats.dump();
+            stats.dump().await;
         }
     });
 
@@ -33,32 +33,21 @@ pub async fn run(cfg: config::Astrobase) -> anyhow::Result<()> {
     Ok(())
 }
 
-/// Represents the gRPC service.
-#[derive(Debug, Default)]
-struct Statistics {
-    number_of_records: u64,
-}
-
-impl Statistics {
-    fn dump(&self) {
-        info!("{:?}", self);
-    }
-}
-
 use crate::database::Database;
+use crate::stats::Stats;
 use std::sync::Arc;
 
 /// Represents the gRPC service.
 struct Service {
     db: Database,
-    stats: Arc<Statistics>,
+    stats: Arc<Stats>,
 }
 
 impl Service {
     fn new() -> Self {
         Service {
-            db: Database::default(),
-            stats: Arc::new(Statistics::default()),
+            db: Database::new(),
+            stats: Arc::new(Stats::new()),
         }
     }
 }
@@ -69,8 +58,10 @@ type CallResult = Result<Response<Output>, Status>;
 impl astrobase_server::Astrobase for Service {
     /// Handles command "Get".
     async fn get(&self, req: Request<Key>) -> CallResult {
-        let r = self.db.get(&req.get_ref().key);
+        let key = &req.get_ref().key;
+        let r = self.db.get(key).await;
         let ok = r.is_ok();
+        self.stats.get_ok(ok).await;
         let info = if ok {
             r.unwrap()
         } else {
@@ -80,26 +71,46 @@ impl astrobase_server::Astrobase for Service {
     }
 
     /// Handles command "Insert".
-    async fn insert(&self, _req: Request<Pair>) -> CallResult {
-        Ok(Response::new(Output {
-            ok: true,
-            info: "YYYYYYYYYYYY".into(),
-        }))
+    async fn insert(&self, req: Request<Pair>) -> CallResult {
+        let key = &req.get_ref().key;
+        let value = &req.get_ref().value;
+        let r = self.db.insert(key, value).await;
+        let ok = r.is_ok();
+        self.stats.insert_ok(ok).await;
+        let info = if ok {
+            r.unwrap()
+        } else {
+            r.unwrap_err().to_string()
+        };
+        Ok(Response::new(Output { ok, info }))
     }
 
     /// Handles command "Delete".
-    async fn delete(&self, _req: Request<Key>) -> CallResult {
-        Ok(Response::new(Output {
-            ok: true,
-            info: "ZZZZZZZZZZZ".into(),
-        }))
+    async fn delete(&self, req: Request<Key>) -> CallResult {
+        let key = &req.get_ref().key;
+        let r = self.db.delete(key).await;
+        let ok = r.is_ok();
+        self.stats.delete_ok(ok).await;
+        let info = if ok {
+            r.unwrap()
+        } else {
+            r.unwrap_err().to_string()
+        };
+        Ok(Response::new(Output { ok, info }))
     }
 
     /// Handles command "Update".
-    async fn update(&self, _req: Request<Pair>) -> CallResult {
-        Ok(Response::new(Output {
-            ok: true,
-            info: "TTTTTTTTTTTT".into(),
-        }))
+    async fn update(&self, req: Request<Pair>) -> CallResult {
+        let key = &req.get_ref().key;
+        let value = &req.get_ref().value;
+        let r = self.db.update(key, value).await;
+        let ok = r.is_ok();
+        self.stats.update_ok(ok).await;
+        let info = if ok {
+            r.unwrap()
+        } else {
+            r.unwrap_err().to_string()
+        };
+        Ok(Response::new(Output { ok, info }))
     }
 }
