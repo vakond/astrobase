@@ -5,14 +5,13 @@ use std::fs::{File, OpenOptions};
 use std::io::{BufRead as _, BufReader, BufWriter, Write as _};
 use std::path::Path;
 
-pub const DELETED: &str = "\0";
+const SEP: &str = "\t";
+const DELETED: &str = "\0";
 
 /// Represents the storage.
 pub struct Storage {
     file: File,
 }
-
-const SEP: &str = "\t";
 
 impl Storage {
     /// Opens the storage for reading only.
@@ -31,23 +30,7 @@ impl Storage {
         Ok(Storage { file })
     }
 
-    /// Searches the key and returns true if found.
-    pub fn contains(&self, key: &str) -> anyhow::Result<bool> {
-        let reader = BufReader::new(&self.file);
-        for line in reader.lines() {
-            let record = line?;
-            let mut parts = record.split(SEP);
-            let head = parts
-                .next()
-                .ok_or_else(|| anyhow!("Invalid record '{}'", record))?;
-            if head == key {
-                return Ok(true);
-            }
-        }
-        Ok(false)
-    }
-
-    /// Searches the key and returns the value or error if not found.
+    /// Searches the key and returns the value or empty string if not found.
     /// We have to scan the entire file because only the last record with given key is actual.
     pub fn find_last(&self, key: &str) -> anyhow::Result<String> {
         let mut value = String::default();
@@ -65,6 +48,9 @@ impl Storage {
                     .into();
             }
         }
+        if value == DELETED {
+            value.clear();
+        }
         Ok(value)
     }
 
@@ -76,9 +62,14 @@ impl Storage {
         Ok(String::default())
     }
 
-    /// Appends new record with special value to the end.
+    /// Appends new record with special value to mark a key as deleted.
     pub fn mark_deleted(&mut self, key: &str) -> anyhow::Result<String> {
-        self.append(key, DELETED)?;
-        Ok(String::default())
+        self.append(key, DELETED)
+    }
+
+    /// Collects garbage — removes duplicates and deleted records.
+    #[allow(unused)]
+    pub fn compact(&mut self) -> anyhow::Result<()> {
+        unimplemented!()
     }
 }

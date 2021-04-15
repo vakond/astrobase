@@ -25,16 +25,17 @@ impl super::Database for Persistent {
         }
     }
 
-    /// Deletes all records.
+    /// Deletes file with records.
     async fn clear(&self) -> anyhow::Result<()> {
         let filename = self.filename.lock().await;
         std::fs::remove_file(filename.clone())?;
         Ok(())
     }
 
-    /// Returns a value or error.
+    /// Returns a value or error if not found.
     async fn get(&self, key: &str) -> anyhow::Result<String> {
         let filename = self.filename.lock().await;
+
         let mut value = String::default();
         if let Ok(storage) = Storage::open(&filename) {
             value = storage.find_last(key)?;
@@ -42,20 +43,23 @@ impl super::Database for Persistent {
         if value.is_empty() {
             return Err(anyhow!("Record '{}' is missing", key));
         }
+
         Ok(value)
     }
 
     /// Inserts new record if there was no such file or key.
     async fn insert(&self, key: &str, value: &str) -> anyhow::Result<String> {
         let filename = self.filename.lock().await;
+
         // RAII block
         {
             if let Ok(storage) = Storage::open(&filename) {
-                if storage.contains(key)? {
+                if !storage.find_last(key)?.is_empty() {
                     return Err(anyhow!("Record '{}' already exists", key));
                 }
             }
         }
+
         let mut storage = Storage::open_w(&filename)?;
         storage.append(key, value)?;
         Ok(String::default())
@@ -64,6 +68,7 @@ impl super::Database for Persistent {
     /// Deletes a record or returns error if was missing.
     async fn delete(&self, key: &str) -> anyhow::Result<String> {
         let filename = self.filename.lock().await;
+
         // RAII block
         let value = {
             let missing = anyhow!("Record '{}' is missing already", key);
@@ -71,13 +76,14 @@ impl super::Database for Persistent {
                 Err(_) => return Err(missing),
                 Ok(storage) => {
                     let value = storage.find_last(key)?;
-                    if value.is_empty() || value == storage::DELETED {
+                    if value.is_empty() {
                         return Err(missing);
                     }
                     value
                 }
             }
         };
+
         let mut storage = Storage::open_w(&filename)?;
         storage.mark_deleted(key)?;
         Ok(value)
@@ -94,7 +100,7 @@ impl super::Database for Persistent {
                 Err(_) => return Err(missing),
                 Ok(storage) => {
                     let old_value = storage.find_last(key)?;
-                    if old_value.is_empty() || value == storage::DELETED {
+                    if old_value.is_empty() {
                         return Err(missing);
                     }
                     old_value

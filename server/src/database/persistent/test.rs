@@ -35,6 +35,18 @@ async fn insert() {
     let r = db.insert("z", "26").await;
     assert!(r.is_err());
     assert_eq!(r.unwrap_err().to_string(), "Record 'z' already exists");
+
+    let r = db.delete("z").await;
+    assert!(r.is_ok());
+    assert_eq!(r.unwrap(), "26");
+
+    let r = db.insert("z", "1000").await;
+    assert!(r.is_ok());
+    assert_eq!(r.unwrap(), "");
+
+    let r = db.get("z").await;
+    assert!(r.is_ok());
+    assert_eq!(r.unwrap(), "1000");
 }
 
 #[tokio::test]
@@ -49,6 +61,10 @@ async fn delete() {
     let r = db.delete("z").await;
     assert!(r.is_err());
     assert_eq!(r.unwrap_err().to_string(), "Record 'z' is missing already");
+
+    let r = db.delete("d").await;
+    assert!(r.is_err());
+    assert_eq!(r.unwrap_err().to_string(), "Record 'd' is missing already");
 }
 
 #[tokio::test]
@@ -74,6 +90,14 @@ async fn update() {
     let r = db.update("z", "26").await;
     assert!(r.is_err());
     assert_eq!(r.unwrap_err().to_string(), "Record 'z' is missing");
+
+    let r = db.delete("a").await;
+    assert!(r.is_ok());
+    assert_eq!(r.unwrap(), "100");
+
+    let r = db.update("a", "100").await;
+    assert!(r.is_err());
+    assert_eq!(r.unwrap_err().to_string(), "Record 'a' is missing");
 }
 
 /// Create a database from scrutch.
