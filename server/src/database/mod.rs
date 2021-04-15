@@ -1,5 +1,8 @@
 //! astrobase-server in-memory key-value database.
 
+#[cfg(test)]
+mod test;
+
 use anyhow::anyhow;
 use std::collections::hash_map::Entry::{Occupied, Vacant};
 use std::collections::HashMap;
