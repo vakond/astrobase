@@ -16,7 +16,7 @@ pub async fn get(endpoint: String, key: String) -> anyhow::Result<()> {
     let mut caller = astrobase_client::AstrobaseClient::connect(endpoint).await?;
     let resp = caller.get(req).await?.into_inner();
     if resp.ok {
-        info!("key: {}, value: {}", key, resp.info);
+        info!("key: '{}', value: '{}'", key, resp.info);
     } else {
         warn!("{}", resp.info);
     }
@@ -36,7 +36,7 @@ pub async fn insert(endpoint: String, key: String, value: String) -> anyhow::Res
     let mut caller = astrobase_client::AstrobaseClient::connect(endpoint).await?;
     let resp = caller.insert(req).await?.into_inner();
     if resp.ok {
-        info!("key: {}, value: {}", key, value);
+        info!("key: '{}', value: '{}'", key, value);
     } else {
         warn!("{}", resp.info);
     }
@@ -52,7 +52,7 @@ pub async fn delete(endpoint: String, key: String) -> anyhow::Result<()> {
     let mut caller = astrobase_client::AstrobaseClient::connect(endpoint).await?;
     let resp = caller.delete(req).await?.into_inner();
     if resp.ok {
-        info!("key: {}, value: {}", key, resp.info);
+        info!("key: '{}', value: '{}'", key, resp.info);
     } else {
         warn!("{}", resp.info);
     }
@@ -72,7 +72,7 @@ pub async fn update(endpoint: String, key: String, value: String) -> anyhow::Res
     let mut caller = astrobase_client::AstrobaseClient::connect(endpoint).await?;
     let resp = caller.update(req).await?.into_inner();
     if resp.ok {
-        info!("key: {}, value: {}", key, value);
+        info!("key: '{}', value: '{}'", key, value);
     } else {
         warn!("{}", resp.info);
     }

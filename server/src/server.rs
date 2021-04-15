@@ -9,7 +9,7 @@ use api::{astrobase_server, Key, Output, Pair};
 use tonic::{transport, Request, Response, Status};
 use tracing::info;
 
-/// Starts the server in listening mode.
+/// Starts the server in listening mode plus task for monitoring.
 pub async fn run(cfg: config::Astrobase) -> anyhow::Result<()> {
     use anyhow::Context as _;
 

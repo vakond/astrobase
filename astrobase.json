@@ -4,6 +4,6 @@
         "endpoint": "[::1]:50051"
     },
     "ticker": {
-        "interval": 10
+        "interval": 60
     }
 }
