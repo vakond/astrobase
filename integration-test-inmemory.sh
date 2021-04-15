@@ -1,5 +1,5 @@
 #!/bin/bash
-# Integration testing for astrobase-server.
+# Integration testing for astrobase-server with in-memory database.
 # Requires Rust installed.
 
 srv="astrobase-server"
@@ -41,7 +41,7 @@ function check_output {
 function build {
     echo
     echo "Building..."
-    cargo build --release --quiet
+    cargo build --quiet --release --no-default-features --features inmemory
     check_exit
 }
 

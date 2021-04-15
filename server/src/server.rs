@@ -9,6 +9,7 @@ use crate::{config, database, database::Database};
 
 use api::{astrobase_server, Key, Output, Pair};
 use std::sync::Arc;
+use std::time::Duration;
 use tonic::{transport, Request, Response, Status};
 use tracing::info;
 
@@ -21,15 +22,10 @@ pub async fn run(cfg: config::Astrobase) -> anyhow::Result<()> {
     #[cfg(feature = "persistent")]
     let service = Service::<database::Persistent>::new();
 
-    let stats = service.stats.clone();
-    let interval = std::time::Duration::from_secs(cfg.ticker.interval);
-    tokio::spawn(async move {
-        let interrupted = false;
-        while !interrupted {
-            tokio::time::sleep(interval).await;
-            stats.dump().await;
-        }
-    });
+    start_monitoring(
+        service.stats.clone(),
+        Duration::from_secs(cfg.ticker.interval),
+    );
 
     info!("Ready");
     let endpoint = cfg.server.endpoint.clone();
@@ -39,6 +35,17 @@ pub async fn run(cfg: config::Astrobase) -> anyhow::Result<()> {
         .await?;
 
     Ok(())
+}
+
+/// Launches additional task which dumps the statistics regularly.
+fn start_monitoring(stats: Arc<Stats>, interval: Duration) {
+    tokio::spawn(async move {
+        let interrupted = false;
+        while !interrupted {
+            tokio::time::sleep(interval).await;
+            stats.dump().await;
+        }
+    });
 }
 
 /// Represents the gRPC service.
