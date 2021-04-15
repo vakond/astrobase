@@ -23,6 +23,13 @@ impl super::Database for InMemory {
         }
     }
 
+    /// Deletes all records.
+    async fn clear(&self) -> anyhow::Result<()> {
+        let mut table = self.table.write().await;
+        table.clear();
+        Ok(())
+    }
+
     /// Returns a value or error.
     async fn get(&self, key: &str) -> anyhow::Result<String> {
         let table = self.table.read().await;

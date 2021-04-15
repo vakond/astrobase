@@ -2,22 +2,15 @@
 
 pub const FAILURE: i32 = 1;
 pub const DEFAULT_CONFIG: &str = "astrobase.json";
-pub const DEFAULT_STORAGE: &str = "astrobase.db";
+pub const DEFAULT_STORAGE: &str = "/tmp/astrobase.db";
 
 use serde::{Deserialize, Serialize};
-use std::path::{Path, PathBuf};
-
-/// Represents the persistent database config.
-#[derive(Debug, Default, Serialize, Deserialize)]
-pub struct Persistent {
-    pub storage: PathBuf,
-}
+use std::path::Path;
 
 /// Represents the server config.
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct Server {
     pub endpoint: String,
-    pub persistent: Option<Persistent>,
 }
 
 /// Represents the ticker config.

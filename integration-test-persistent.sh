@@ -6,7 +6,7 @@ srv="astrobase-server"
 cli="cli"
 bin=./target/release
 cfg="/tmp/astrobase-integration-testing.json"
-db="astrobase.db"
+db="/tmp/astrobase.db"
 out="/tmp/astrobase-server.out"
 
 function check_exit {

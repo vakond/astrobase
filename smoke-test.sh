@@ -5,6 +5,7 @@
 bin=./target/release
 srv="astrobase-server"
 cli="cli"
+db="/tmp/astrobase.db"
 
 if [ "$#" -ne 1 ]; then
     echo "Error: no argument"
@@ -25,6 +26,8 @@ if [ $result -ne 0 ]; then
     echo "FAIL"
     exit $result
 fi
+
+rm -f $db
 
 echo
 echo "Starting server..."

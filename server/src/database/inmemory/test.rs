@@ -72,6 +72,7 @@ async fn update() {
 
 async fn populate_database() -> InMemory {
     let db = InMemory::new();
+    db.clear().await.ok();
     db.insert("a", "1").await.ok();
     db.insert("b", "2").await.ok();
     db.insert("c", "3").await.ok();

@@ -1,9 +1,12 @@
 //! astrobase-server persistent key-value database unit tests.
+//! Note: we use serial-test crate to avoid concurrent access to a single storage file.
 
 use super::Persistent;
 use crate::database::Database;
+use serial_test::serial;
 
 #[tokio::test]
+#[serial]
 async fn get() {
     let db = populate_database().await;
 
@@ -17,6 +20,7 @@ async fn get() {
 }
 
 #[tokio::test]
+#[serial]
 async fn insert() {
     let db = populate_database().await;
 
@@ -34,6 +38,7 @@ async fn insert() {
 }
 
 #[tokio::test]
+#[serial]
 async fn delete() {
     let db = populate_database().await;
 
@@ -47,6 +52,7 @@ async fn delete() {
 }
 
 #[tokio::test]
+#[serial]
 async fn update() {
     let db = populate_database().await;
 
@@ -70,8 +76,10 @@ async fn update() {
     assert_eq!(r.unwrap_err().to_string(), "Record 'z' is missing");
 }
 
+/// Create a database from scrutch.
 async fn populate_database() -> Persistent {
     let db = Persistent::new();
+    db.clear().await.ok();
     db.insert("a", "1").await.ok();
     db.insert("b", "2").await.ok();
     db.insert("c", "3").await.ok();

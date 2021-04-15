@@ -25,6 +25,13 @@ impl super::Database for Persistent {
         }
     }
 
+    /// Deletes all records.
+    async fn clear(&self) -> anyhow::Result<()> {
+        let filename = self.filename.lock().await;
+        std::fs::remove_file(filename.clone())?;
+        Ok(())
+    }
+
     /// Returns a value or error.
     async fn get(&self, key: &str) -> anyhow::Result<String> {
         let filename = self.filename.lock().await;
