@@ -9,7 +9,7 @@ use std::collections::hash_map::Entry::{Occupied, Vacant};
 use std::collections::HashMap;
 use tokio::sync::RwLock;
 
-/// Represents the database internal structure.
+/// Represents the database internals.
 pub struct InMemory {
     table: RwLock<HashMap<String, String>>,
 }

@@ -6,6 +6,7 @@ srv="astrobase-server"
 cli="cli"
 bin=./target/release
 cfg="/tmp/astrobase-integration-testing.json"
+db="astrobase.db"
 out="/tmp/astrobase-server.out"
 
 function check_exit {
@@ -69,6 +70,15 @@ function stop_server {
     killall $srv
 }
 
+function test_no_db {
+    echo
+    echo "test_no_db"
+    rm -f $db
+    $bin/$cli get test
+    check_exit
+    check_output "NR: 0" "GET(ok/fail): (0, 1)"
+}
+
 function test_successful_insert {
     echo
     echo "test_successful_insert"
@@ -90,7 +100,7 @@ function test_successful_get {
     echo "test_successful_get"
     $bin/$cli get smoke
     check_exit
-    check_output "NR: 1" "GET(ok/fail): (1, 0)"
+    check_output "NR: 1" "GET(ok/fail): (1, 1)"
 }
 
 function test_failing_get {
@@ -98,7 +108,7 @@ function test_failing_get {
     echo "test_failing_get"
     $bin/$cli get garbage
     check_exit
-    check_output "NR: 1" "GET(ok/fail): (1, 1)"
+    check_output "NR: 1" "GET(ok/fail): (1, 2)"
 }
 
 function test_successful_update {
@@ -138,6 +148,8 @@ function test_failing_delete {
 
 build
 start_server
+
+test_no_db
 
 test_successful_insert
 test_failing_insert
