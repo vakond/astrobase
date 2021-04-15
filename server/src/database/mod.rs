@@ -17,6 +17,3 @@ pub trait Database: Send + Sync + 'static {
     async fn delete(&self, key: &str) -> anyhow::Result<String>;
     async fn update(&self, key: &str, value: &str) -> anyhow::Result<String>;
 }
-
-#[cfg(test)]
-mod test;

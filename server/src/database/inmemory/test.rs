@@ -1,6 +1,7 @@
 //! astrobase-server in-memory key-value database unit tests.
 
-use super::*;
+use super::InMemory;
+use crate::database::Database;
 
 #[tokio::test]
 async fn get() {

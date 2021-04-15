@@ -1,13 +1,15 @@
 //! astrobase-server persistent key-value database.
 
+use crate::config;
+
 use async_trait::async_trait;
-use std::collections::HashMap;
-use tokio::sync::RwLock;
+use std::path::PathBuf;
+use tokio::sync::Mutex;
 
 /// Represents the database internal structure.
 #[allow(unused)]
 pub struct Persistent {
-    table: RwLock<HashMap<String, String>>,
+    storage: Mutex<PathBuf>,
 }
 
 #[async_trait]
@@ -15,7 +17,7 @@ impl super::Database for Persistent {
     /// Construct new instance of the database.
     fn new() -> Self {
         Persistent {
-            table: RwLock::new(HashMap::new()),
+            storage: Mutex::new(config::DEFAULT_STORAGE.into()),
         }
     }
 
