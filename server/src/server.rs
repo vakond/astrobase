@@ -16,8 +16,10 @@ use tracing::info;
 pub async fn run(cfg: config::Astrobase) -> anyhow::Result<()> {
     use anyhow::Context as _;
 
+    #[cfg(feature = "inmemory")]
     let service = Service::<database::InMemory>::new();
-    //let service = Service::<database::Persistent>::new();
+    #[cfg(feature = "persistent")]
+    let service = Service::<database::Persistent>::new();
 
     let stats = service.stats.clone();
     let interval = std::time::Duration::from_secs(cfg.ticker.interval);

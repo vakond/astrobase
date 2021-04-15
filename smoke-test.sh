@@ -6,9 +6,18 @@ bin=./target/release
 srv="astrobase-server"
 cli="cli"
 
+if [ "$#" -ne 1 ]; then
+    echo "Error: no argument"
+    echo "Usage:"
+    echo "    smoke-test.sh inmemory"
+    echo "or"
+    echo "    smoke-test.sh persistent"
+    exit $result
+fi
+
 echo
 echo "Building..."
-cargo build --release
+cargo build --release --no-default-features --features $1
 result=$?
 echo "Result: $result"
 if [ $result -ne 0 ]; then
