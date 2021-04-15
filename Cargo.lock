@@ -45,6 +45,7 @@ name = "astrobase-server"
 version = "0.0.1"
 dependencies = [
  "anyhow",
+ "async-trait",
  "prost",
  "serde",
  "serde_json",

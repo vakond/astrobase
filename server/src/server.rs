@@ -4,8 +4,11 @@ mod api {
     tonic::include_proto!("api");
 }
 
-use crate::config;
+use crate::stats::Stats;
+use crate::{config, database, database::Database};
+
 use api::{astrobase_server, Key, Output, Pair};
+use std::sync::Arc;
 use tonic::{transport, Request, Response, Status};
 use tracing::info;
 
@@ -13,7 +16,7 @@ use tracing::info;
 pub async fn run(cfg: config::Astrobase) -> anyhow::Result<()> {
     use anyhow::Context as _;
 
-    let service = Service::new();
+    let service = Service::<database::InMemory>::new();
 
     let stats = service.stats.clone();
     let interval = std::time::Duration::from_secs(cfg.ticker.interval);
@@ -35,20 +38,16 @@ pub async fn run(cfg: config::Astrobase) -> anyhow::Result<()> {
     Ok(())
 }
 
-use crate::database::Database;
-use crate::stats::Stats;
-use std::sync::Arc;
-
 /// Represents the gRPC service.
-struct Service {
-    db: Database,
+struct Service<Db: Database> {
+    db: Db,
     stats: Arc<Stats>,
 }
 
-impl Service {
+impl<Db: Database> Service<Db> {
     fn new() -> Self {
         Service {
-            db: Database::new(),
+            db: Db::new(),
             stats: Arc::new(Stats::new()),
         }
     }
@@ -57,7 +56,7 @@ impl Service {
 type CallResult = Result<Response<Output>, Status>;
 
 #[tonic::async_trait]
-impl astrobase_server::Astrobase for Service {
+impl<Db: Database> astrobase_server::Astrobase for Service<Db> {
     /// Handles command "Get".
     async fn get(&self, req: Request<Key>) -> CallResult {
         let key = &req.get_ref().key;

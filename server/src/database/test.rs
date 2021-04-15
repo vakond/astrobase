@@ -69,8 +69,8 @@ async fn update() {
     assert_eq!(r.unwrap_err().to_string(), "Record 'z' is missing");
 }
 
-async fn populate_database() -> Database {
-    let db = Database::new();
+async fn populate_database() -> InMemory {
+    let db = InMemory::new();
     db.insert("a", "1").await.ok();
     db.insert("b", "2").await.ok();
     db.insert("c", "3").await.ok();
