@@ -1,11 +1,10 @@
 //! astrobase-server in-memory key-value database.
 
 mod inmemory;
-
-#[cfg(test)]
-mod test;
+mod persistent;
 
 pub use inmemory::InMemory;
+pub use persistent::Persistent;
 
 use async_trait::async_trait;
 
@@ -18,3 +17,6 @@ pub trait Database: Send + Sync + 'static {
     async fn delete(&self, key: &str) -> anyhow::Result<String>;
     async fn update(&self, key: &str, value: &str) -> anyhow::Result<String>;
 }
+
+#[cfg(test)]
+mod test;
