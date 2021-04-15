@@ -1,4 +1,4 @@
-//! astrobase-server in-memory key-value database.
+//! astrobase-server key-value database.
 
 mod inmemory;
 mod persistent;

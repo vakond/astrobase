@@ -1,2 +1,2 @@
 #!/bin/bash
-# Stress test
+# Stress test (not implemented)
