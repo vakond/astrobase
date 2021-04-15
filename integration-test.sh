@@ -41,7 +41,7 @@ function check_output {
 function build {
     echo
     echo "Building..."
-    cargo build --release
+    cargo build --release --quiet
     check_exit
 }
 
@@ -65,8 +65,6 @@ EOF
 
 function stop_server {
     echo
-    echo "Waiting 5 seconds..."
-    sleep 5s
     echo "Stopping server..."
     killall $srv
 }

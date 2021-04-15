@@ -1,6 +1,7 @@
 //! astrobase-server in-memory key-value database.
 
 use anyhow::anyhow;
+use std::collections::hash_map::Entry::{Occupied, Vacant};
 use std::collections::HashMap;
 use tokio::sync::RwLock;
 
@@ -29,11 +30,11 @@ impl Database {
     /// Inserts new record if there was no such key or returns error.
     pub async fn insert(&self, key: &str, value: &str) -> anyhow::Result<String> {
         let mut table = self.table.write().await;
-        if table.contains_key(key) {
-            return Err(anyhow!("Record '{}' already exists", key));
-        }
-        table.insert(key.into(), value.into());
-        Ok("".into())
+        match table.entry(key.into()) {
+            Occupied(_) => return Err(anyhow!("Record '{}' already exists", key)),
+            Vacant(entry) => entry.insert(value.into()),
+        };
+        Ok(String::default())
     }
 
     /// Deletes a record or returns error if was missing.
@@ -48,13 +49,15 @@ impl Database {
     /// Updates record or returns error if the record was missing or identical.
     pub async fn update(&self, key: &str, value: &str) -> anyhow::Result<String> {
         let mut table = self.table.write().await;
-        let old_value = table
-            .get(key)
-            .ok_or_else(|| anyhow!("Record '{}' is missing", key))?;
-        if value == old_value {
-            return Err(anyhow!("Record '{}' already exists and identical", key));
-        }
-        *table.get_mut(key).unwrap() = value.into();
-        Ok("".into())
+        match table.entry(key.into()) {
+            Vacant(_) => return Err(anyhow!("Record '{}' is missing", key)),
+            Occupied(mut entry) => {
+                if entry.get() == value {
+                    return Err(anyhow!("Record '{}' already exists and identical", key));
+                }
+                *entry.get_mut() = value.into();
+            }
+        };
+        Ok(String::default())
     }
 }
