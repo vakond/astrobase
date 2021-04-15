@@ -1,5 +1,7 @@
 //! astrobase-client config module.
 
+pub const FAILURE: i32 = 1;
+
 pub const DEFAULT_ENDPOINT: &str = "http://[::1]:50051";
 
 pub const MAX_KEY_LEN: usize = 1024;

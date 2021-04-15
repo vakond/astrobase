@@ -1,5 +1,7 @@
 //! astrobase-server config module.
 
+pub const FAILURE: i32 = 1;
+
 use serde::{Deserialize, Serialize};
 use std::path::Path;
 

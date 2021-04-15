@@ -1,6 +1,6 @@
 //! astrobase-client commands implementation.
 
-pub mod api {
+mod api {
     tonic::include_proto!("api");
 }
 

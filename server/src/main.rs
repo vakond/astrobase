@@ -13,6 +13,7 @@ fn main() {
     init_logger();
     if let Err(err) = execute(cli::application()) {
         eprintln!("Error: {:#}", err);
+        std::process::exit(config::FAILURE);
     }
 }
 
