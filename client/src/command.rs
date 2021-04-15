@@ -1,4 +1,4 @@
-//! astrobase-client commands implementation.
+//! astrobase-client gRPC API calls.
 
 mod api {
     tonic::include_proto!("api");

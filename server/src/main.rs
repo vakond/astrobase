@@ -29,9 +29,8 @@ fn init_logger() {
 fn execute(app: cli::Application) -> anyhow::Result<()> {
     match app.cmd {
         cli::Command::Run => {
-            let config_file = app.config.unwrap_or("astrobase.json".into());
             let rt = tokio::runtime::Runtime::new()?;
-            rt.block_on(run(&config_file))?;
+            rt.block_on(run(&app.config))?;
         }
     }
 

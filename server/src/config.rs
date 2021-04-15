@@ -1,6 +1,7 @@
 //! astrobase-server config module.
 
 pub const FAILURE: i32 = 1;
+pub const DEFAULT_CONFIG: &str = "astrobase.json";
 
 use serde::{Deserialize, Serialize};
 use std::path::Path;

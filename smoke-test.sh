@@ -24,7 +24,7 @@ $bin/$srv run &
 echo
 echo "Starting client..."
 sleep 1s
-$bin/$cli insert A 1
+$bin/$cli insert smoke test
 result=$?
 echo "Result: $result"
 if [ $result -ne 0 ]; then
