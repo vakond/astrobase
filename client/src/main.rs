@@ -25,21 +25,20 @@ fn init_logger() {
 
 /// Dispatches CLI commands.
 fn execute(app: cli::Application) -> anyhow::Result<()> {
-    let endpoint = app.endpoint;
     let rt = tokio::runtime::Runtime::new()?;
 
     match app.cmd {
         cli::Command::Get { key } => {
-            rt.block_on(command::get(endpoint, key))?;
+            rt.block_on(command::get(app.endpoint, key))?;
         }
         cli::Command::Insert { key, value } => {
-            rt.block_on(command::insert(endpoint, key, value))?;
+            rt.block_on(command::insert(app.endpoint, key, value))?;
         }
         cli::Command::Delete { key } => {
-            rt.block_on(command::delete(endpoint, key))?;
+            rt.block_on(command::delete(app.endpoint, key))?;
         }
         cli::Command::Update { key, value } => {
-            rt.block_on(command::update(endpoint, key, value))?;
+            rt.block_on(command::update(app.endpoint, key, value))?;
         }
     }
 

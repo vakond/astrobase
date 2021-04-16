@@ -12,8 +12,8 @@ use tracing::{info, warn};
 pub async fn get(endpoint: String, key: String) -> anyhow::Result<()> {
     ensure_key_valid(&key)?;
 
-    let req = Request::new(Key { key: key.clone() });
     let mut caller = astrobase_client::AstrobaseClient::connect(endpoint).await?;
+    let req = Request::new(Key { key: key.clone() });
     let resp = caller.get(req).await?.into_inner();
     if resp.ok {
         info!("key: '{}', value: '{}'", key, resp.info);
@@ -29,11 +29,11 @@ pub async fn insert(endpoint: String, key: String, value: String) -> anyhow::Res
     ensure_key_valid(&key)?;
     ensure_value_valid(&value)?;
 
+    let mut caller = astrobase_client::AstrobaseClient::connect(endpoint).await?;
     let req = Request::new(Pair {
         key: key.clone(),
         value: value.clone(),
     });
-    let mut caller = astrobase_client::AstrobaseClient::connect(endpoint).await?;
     let resp = caller.insert(req).await?.into_inner();
     if resp.ok {
         info!("key: '{}', value: '{}'", key, value);
@@ -48,8 +48,8 @@ pub async fn insert(endpoint: String, key: String, value: String) -> anyhow::Res
 pub async fn delete(endpoint: String, key: String) -> anyhow::Result<()> {
     ensure_key_valid(&key)?;
 
-    let req = Request::new(Key { key: key.clone() });
     let mut caller = astrobase_client::AstrobaseClient::connect(endpoint).await?;
+    let req = Request::new(Key { key: key.clone() });
     let resp = caller.delete(req).await?.into_inner();
     if resp.ok {
         info!("key: '{}', value: '{}'", key, resp.info);
@@ -65,11 +65,11 @@ pub async fn update(endpoint: String, key: String, value: String) -> anyhow::Res
     ensure_key_valid(&key)?;
     ensure_value_valid(&value)?;
 
+    let mut caller = astrobase_client::AstrobaseClient::connect(endpoint).await?;
     let req = Request::new(Pair {
         key: key.clone(),
         value: value.clone(),
     });
-    let mut caller = astrobase_client::AstrobaseClient::connect(endpoint).await?;
     let resp = caller.update(req).await?.into_inner();
     if resp.ok {
         info!("key: '{}', value: '{}'", key, value);
