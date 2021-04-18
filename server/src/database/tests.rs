@@ -1,15 +1,37 @@
-//! astrobase-server persistent key-value database unit tests.
-//! Note: we use serial-test crate to avoid concurrent access to a single storage file.
+//! astrobase-server key-value database unit tests.
 
-use super::Persistent;
-use crate::database::Database;
-use serial_test::serial;
+use super::{Database, InMemory, Persistent};
 
 #[tokio::test]
-#[serial]
-async fn get() {
-    let db = populate_database().await;
+async fn inmemory() {
+    let db = populate_database::<InMemory>().await;
+    run_tests(db).await;
+}
 
+#[tokio::test]
+async fn persistent() {
+    let db = populate_database::<Persistent>().await;
+    run_tests(db).await;
+}
+
+async fn populate_database<Db: Database>() -> Db {
+    let db = Db::new();
+    db.clear().await.ok();
+    db.insert("a", "1").await.ok();
+    db.insert("b", "2").await.ok();
+    db.insert("c", "3").await.ok();
+    db.insert("d", "4").await.ok();
+    db
+}
+
+async fn run_tests<Db: Database>(db: Db) {
+    test_get(&db).await;
+    test_insert(&db).await;
+    test_delete(&db).await;
+    test_update(&db).await;
+}
+
+async fn test_get<Db: Database>(db: &Db) {
     let r = db.get("a").await;
     assert!(r.is_ok());
     assert_eq!(r.unwrap(), "1");
@@ -19,11 +41,7 @@ async fn get() {
     assert_eq!(r.unwrap_err().to_string(), "Record 'z' is missing");
 }
 
-#[tokio::test]
-#[serial]
-async fn insert() {
-    let db = populate_database().await;
-
+async fn test_insert<Db: Database>(db: &Db) {
     let r = db.insert("z", "26").await;
     assert!(r.is_ok());
     assert_eq!(r.unwrap(), "");
@@ -49,14 +67,14 @@ async fn insert() {
     assert_eq!(r.unwrap(), "1000");
 }
 
-#[tokio::test]
-#[serial]
-async fn delete() {
-    let db = populate_database().await;
-
+async fn test_delete<Db: Database>(db: &Db) {
     let r = db.delete("d").await;
     assert!(r.is_ok());
     assert_eq!(r.unwrap(), "4");
+
+    let r = db.delete("z").await;
+    assert!(r.is_ok());
+    assert_eq!(r.unwrap(), "1000");
 
     let r = db.delete("z").await;
     assert!(r.is_err());
@@ -67,11 +85,7 @@ async fn delete() {
     assert_eq!(r.unwrap_err().to_string(), "Record 'd' is missing already");
 }
 
-#[tokio::test]
-#[serial]
-async fn update() {
-    let db = populate_database().await;
-
+async fn test_update<Db: Database>(db: &Db) {
     let r = db.update("a", "100").await;
     assert!(r.is_ok());
     assert_eq!(r.unwrap(), "");
@@ -98,15 +112,4 @@ async fn update() {
     let r = db.update("a", "100").await;
     assert!(r.is_err());
     assert_eq!(r.unwrap_err().to_string(), "Record 'a' is missing");
-}
-
-/// Create a database from scrutch.
-async fn populate_database() -> Persistent {
-    let db = Persistent::new();
-    db.clear().await.ok();
-    db.insert("a", "1").await.ok();
-    db.insert("b", "2").await.ok();
-    db.insert("c", "3").await.ok();
-    db.insert("d", "4").await.ok();
-    db
 }

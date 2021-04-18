@@ -1,14 +1,10 @@
 //! astrobase-server persistent key-value database.
 
-mod storage;
-#[cfg(test)]
-mod test;
-
+use super::storage::Storage;
 use crate::config;
 use anyhow::anyhow;
 use async_trait::async_trait;
 use std::path::PathBuf;
-use storage::Storage;
 use tokio::sync::Mutex;
 
 /// Represents the database internals.

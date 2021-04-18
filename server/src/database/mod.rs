@@ -2,6 +2,10 @@
 
 mod inmemory;
 mod persistent;
+mod storage;
+
+#[cfg(test)]
+mod tests;
 
 pub use inmemory::InMemory;
 pub use persistent::Persistent;
