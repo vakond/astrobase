@@ -1,79 +1,61 @@
 //! astrobase-server database statistics.
 
-use tokio::sync::RwLock;
-
 /// Represents the statistics.
+#[derive(Default)]
 pub struct Stats {
-    number_of_records: RwLock<usize>,
-    get_ok_fail: RwLock<(usize, usize)>,
-    insert_ok_fail: RwLock<(usize, usize)>,
-    delete_ok_fail: RwLock<(usize, usize)>,
-    update_ok_fail: RwLock<(usize, usize)>,
+    number_of_records: usize,
+    get_ok_fail: (usize, usize),
+    insert_ok_fail: (usize, usize),
+    delete_ok_fail: (usize, usize),
+    update_ok_fail: (usize, usize),
 }
 
 impl Stats {
-    /// Constructs new instance of Stats.
-    pub fn new() -> Self {
-        Stats {
-            number_of_records: RwLock::new(0),
-            get_ok_fail: RwLock::new((0, 0)),
-            insert_ok_fail: RwLock::new((0, 0)),
-            delete_ok_fail: RwLock::new((0, 0)),
-            update_ok_fail: RwLock::new((0, 0)),
-        }
-    }
-
     /// Updates the GET stats.
-    pub async fn get(&self, ok: bool) {
-        let mut ok_fail = self.get_ok_fail.write().await;
+    pub fn get(&mut self, ok: bool) {
         if ok {
-            ok_fail.0 += 1
+            self.get_ok_fail.0 += 1
         } else {
-            ok_fail.1 += 1
+            self.get_ok_fail.1 += 1
         }
     }
 
     /// Updates the INSERT stats (may increment number of records).
-    pub async fn insert(&self, ok: bool) {
-        let mut ok_fail = self.insert_ok_fail.write().await;
+    pub fn insert(&mut self, ok: bool) {
         if ok {
-            let mut count = self.number_of_records.write().await;
-            *count += 1;
-            ok_fail.0 += 1
+            self.number_of_records += 1;
+            self.insert_ok_fail.0 += 1
         } else {
-            ok_fail.1 += 1
+            self.insert_ok_fail.1 += 1
         }
     }
 
     /// Updates the DELETE stats (may decrement number of records).
-    pub async fn delete(&self, ok: bool) {
-        let mut ok_fail = self.delete_ok_fail.write().await;
+    pub fn delete(&mut self, ok: bool) {
         if ok {
-            let mut count = self.number_of_records.write().await;
-            *count -= 1;
-            ok_fail.0 += 1
+            self.number_of_records -= 1;
+            self.delete_ok_fail.0 += 1
         } else {
-            ok_fail.1 += 1
+            self.delete_ok_fail.1 += 1
         }
     }
 
     /// Updates the UPDATE stats.
-    pub async fn update(&self, ok: bool) {
-        let mut ok_fail = self.update_ok_fail.write().await;
+    pub fn update(&mut self, ok: bool) {
         if ok {
-            ok_fail.0 += 1
+            self.update_ok_fail.0 += 1
         } else {
-            ok_fail.1 += 1
+            self.update_ok_fail.1 += 1
         }
     }
 
     /// Dumps the data to stderr.
-    pub async fn dump(&self) {
-        let n = self.number_of_records.read().await;
-        let get = self.get_ok_fail.read().await;
-        let ins = self.insert_ok_fail.read().await;
-        let del = self.delete_ok_fail.read().await;
-        let upd = self.update_ok_fail.read().await;
+    pub fn dump(&self) {
+        let n = self.number_of_records;
+        let get = self.get_ok_fail;
+        let ins = self.insert_ok_fail;
+        let del = self.delete_ok_fail;
+        let upd = self.update_ok_fail;
         eprintln!("NR: {},    GET(ok/fail): {:?},    INSERT(ok/fail): {:?},    DELETE(ok/fail): {:?},    UPDATE(ok/fail): {:?}",
                   n, get, ins, del, upd);
     }
