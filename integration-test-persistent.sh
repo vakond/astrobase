@@ -76,7 +76,7 @@ function test_no_db {
     rm -f $db
     $bin/$cli get test
     check_exit
-    check_output "NR: 0" "GET(ok/fail): (0, 1)"
+    check_output "NR:0" "GET(ok/fail):(0, 1)"
 }
 
 function test_successful_insert {
@@ -84,7 +84,7 @@ function test_successful_insert {
     echo "test_successful_insert"
     $bin/$cli insert smoke test
     check_exit
-    check_output "NR: 1" "INSERT(ok/fail): (1, 0)"
+    check_output "NR:1" "INSERT(ok/fail):(1, 0)"
 }
 
 function test_failing_insert {
@@ -92,7 +92,7 @@ function test_failing_insert {
     echo "test_failing_insert"
     $bin/$cli insert smoke test
     check_exit
-    check_output "NR: 1" "INSERT(ok/fail): (1, 1)"
+    check_output "NR:1" "INSERT(ok/fail):(1, 1)"
 }
 
 function test_successful_get {
@@ -100,7 +100,7 @@ function test_successful_get {
     echo "test_successful_get"
     $bin/$cli get smoke
     check_exit
-    check_output "NR: 1" "GET(ok/fail): (1, 1)"
+    check_output "NR:1" "GET(ok/fail):(1, 1)"
 }
 
 function test_failing_get {
@@ -108,7 +108,7 @@ function test_failing_get {
     echo "test_failing_get"
     $bin/$cli get garbage
     check_exit
-    check_output "NR: 1" "GET(ok/fail): (1, 2)"
+    check_output "NR:1" "GET(ok/fail):(1, 2)"
 }
 
 function test_successful_update {
@@ -116,7 +116,7 @@ function test_successful_update {
     echo "test_successful_update"
     $bin/$cli update smoke "on the water"
     check_exit
-    check_output "NR: 1" "UPDATE(ok/fail): (1, 0)"
+    check_output "NR:1" "UPDATE(ok/fail):(1, 0)"
 }
 
 function test_failing_update {
@@ -124,7 +124,7 @@ function test_failing_update {
     echo "test_failing_update"
     $bin/$cli update garbage garbage
     check_exit
-    check_output "NR: 1" "UPDATE(ok/fail): (1, 1)"
+    check_output "NR:1" "UPDATE(ok/fail):(1, 1)"
 }
 
 function test_successful_delete {
@@ -132,10 +132,10 @@ function test_successful_delete {
     echo "test_successful_delete"
     $bin/$cli insert brick wall
     check_exit
-    check_output "NR: 2" "INSERT(ok/fail): (2, 1)"
+    check_output "NR:2" "INSERT(ok/fail):(2, 1)"
     $bin/$cli delete smoke
     check_exit
-    check_output "NR: 1" "DELETE(ok/fail): (1, 0)"
+    check_output "NR:1" "DELETE(ok/fail):(1, 0)"
 }
 
 function test_failing_delete {
@@ -143,7 +143,7 @@ function test_failing_delete {
     echo "test_failing_delete"
     $bin/$cli delete garbage
     check_exit
-    check_output "NR: 1" "DELETE(ok/fail): (1, 1)"
+    check_output "NR:1" "DELETE(ok/fail):(1, 1)"
 }
 
 build

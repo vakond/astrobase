@@ -51,12 +51,11 @@ impl Stats {
 
     /// Dumps the data to stderr.
     pub fn dump(&self) {
-        let n = self.number_of_records;
-        let get = self.get_ok_fail;
-        let ins = self.insert_ok_fail;
-        let del = self.delete_ok_fail;
-        let upd = self.update_ok_fail;
-        eprintln!("NR: {},    GET(ok/fail): {:?},    INSERT(ok/fail): {:?},    DELETE(ok/fail): {:?},    UPDATE(ok/fail): {:?}",
-                  n, get, ins, del, upd);
+        eprintln!("NR:{}, GET(ok/fail):{:?}, INSERT(ok/fail):{:?}, DELETE(ok/fail):{:?}, UPDATE(ok/fail):{:?}",
+            self.number_of_records,
+            self.get_ok_fail,
+            self.insert_ok_fail,
+            self.delete_ok_fail,
+            self.update_ok_fail);
     }
 }

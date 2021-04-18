@@ -57,7 +57,7 @@ impl Storage {
     /// Appends new record to the end.
     pub fn append(&mut self, key: &str, value: &str) -> anyhow::Result<String> {
         let mut writer = BufWriter::new(&self.file);
-        writeln!(&mut writer, "{}\t{}", key, value)?;
+        writeln!(&mut writer, "{}{}{}", key, SEP, value)?;
         writer.flush()?;
         Ok(String::default())
     }
