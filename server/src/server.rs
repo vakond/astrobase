@@ -25,7 +25,7 @@ pub async fn run(cfg: config::Astrobase) -> anyhow::Result<()> {
 
     start_monitoring(
         service.stats.clone(),
-        Duration::from_secs(cfg.ticker.interval),
+        Duration::from_secs(cfg.monitoring.interval),
     );
 
     info!("Ready");

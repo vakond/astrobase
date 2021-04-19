@@ -13,9 +13,9 @@ pub struct Server {
     pub endpoint: String,
 }
 
-/// Represents the ticker config.
+/// Represents the monitoring config.
 #[derive(Debug, Default, Serialize, Deserialize)]
-pub struct Ticker {
+pub struct Monitoring {
     pub interval: u64, // seconds
 }
 
@@ -24,15 +24,15 @@ pub struct Ticker {
 pub struct Astrobase {
     pub environment: String,
     pub server: Server,
-    pub ticker: Ticker,
+    pub monitoring: Monitoring,
 }
 
 /// Implements construction of the config.
 impl Astrobase {
     pub fn load(filename: &Path) -> Self {
-        let text = read(filename).expect("cannot read the config file");
+        let text = read(filename).expect("Cannot read the config file");
         let cfg: Astrobase =
-            serde_json::from_str(&text).expect("invalid format of the config file");
+            serde_json::from_str(&text).expect("Invalid format of the config file");
         cfg
     }
 }

@@ -3,7 +3,7 @@
     "server": {
         "endpoint": "[::1]:50051"
     },
-    "ticker": {
+    "monitoring": {
         "interval": 60
     }
 }

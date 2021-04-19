@@ -41,6 +41,7 @@ function check_output {
     stats_ensure="some"
     while [[ $i<10 && $stats != $stats_ensure ]]
     do
+        sleep 0.1s
 	stats=$(tail -1 $out)
 	stats_ensure=$(tail -1 $out)
 	((i=i+1))
@@ -74,7 +75,7 @@ function start_server {
     "server": {
 	"endpoint": "[::1]:50051"
     },
-    "ticker": {
+    "monitoring": {
 	"interval": 1
     }
 }
