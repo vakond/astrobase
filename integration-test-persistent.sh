@@ -33,8 +33,27 @@ function check_substring {
 function check_output {
     nr=$1
     counter=$2
-    sleep 3s
-    stats=$(tail -1 $out)
+    sleep 1s
+
+    # ensure full line is dumped
+    i=0
+    stats=""
+    stats_ensure="some"
+    while [[ $i<10 && $stats != $stats_ensure ]]
+    do
+	stats=$(tail -1 $out)
+	stats_ensure=$(tail -1 $out)
+	((i=i+1))
+    done
+    #echo "i=$i"
+
+    if [[ $i>=10 ]]
+    then
+	echo "Wrong output: $stats"
+	killall $srv
+	exit
+    fi
+
     check_substring "$stats" "$nr"
     check_substring "$stats" "$counter"
 }

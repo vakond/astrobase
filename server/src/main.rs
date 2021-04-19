@@ -41,6 +41,5 @@ fn execute(app: cli::Application) -> anyhow::Result<()> {
 /// Runs the server.
 async fn run(config_file: &std::path::Path) -> anyhow::Result<()> {
     let cfg = config::Astrobase::load(config_file);
-    server::run(cfg).await?;
-    Ok(())
+    server::run(cfg).await
 }
