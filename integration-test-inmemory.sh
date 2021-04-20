@@ -135,6 +135,9 @@ function test_failing_update {
     $bin/$cli update garbage garbage
     check_exit
     check_output "NR:1" "UPDATE(ok/fail):(1, 1)"
+    $bin/$cli update smoke "on the water"
+    check_exit
+    check_output "NR:1" "UPDATE(ok/fail):(1, 2)"
 }
 
 function test_successful_delete {

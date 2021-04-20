@@ -78,11 +78,11 @@ async fn test_delete<Db: Database>(db: &Db) {
 
     let r = db.delete("z").await;
     assert!(r.is_err());
-    assert_eq!(r.unwrap_err().to_string(), "Record 'z' is missing already");
+    assert_eq!(r.unwrap_err().to_string(), "Record 'z' is already missing");
 
     let r = db.delete("d").await;
     assert!(r.is_err());
-    assert_eq!(r.unwrap_err().to_string(), "Record 'd' is missing already");
+    assert_eq!(r.unwrap_err().to_string(), "Record 'd' is already missing");
 }
 
 async fn test_update<Db: Database>(db: &Db) {
