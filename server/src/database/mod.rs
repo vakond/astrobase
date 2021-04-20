@@ -39,16 +39,18 @@ pub enum Error {
     #[error("Invalid record '{0}'")]
     RecordInvalid(String),
 
-    #[error("Unsupported file name '{0}'")]
+    #[error("Unsupported database file name '{0}'")]
     Filename(PathBuf),
 
-    #[error("Cannot open file '{1}': {0}")]
+    #[error("Database file missing '{0}'")]
+    FileMissing(PathBuf),
+    #[error("Cannot open database file '{1}': {0}")]
     OpenFile(#[source] std::io::Error, PathBuf),
-    #[error("Cannot delete file '{1}': {0}")]
+    #[error("Cannot delete database file '{1}': {0}")]
     DeleteFile(#[source] std::io::Error, PathBuf),
-    #[error("Cannot lock file '{1}': {0}")]
+    #[error("Cannot lock database file '{1}': {0}")]
     LockFile(#[source] std::io::Error, PathBuf),
-    #[error("Cannot unlock file '{1}': {0}")]
+    #[error("Cannot unlock database file '{1}': {0}")]
     UnlockFile(#[source] std::io::Error, PathBuf),
 
     #[error("Input/output error")]

@@ -24,21 +24,28 @@ impl super::Database for Persistent {
 
     /// Deletes file with records.
     async fn clear(&self) -> Result<()> {
-        if self.filename.exists() {
-            let file = lock_write(&self.filename)?;
-            std::fs::remove_file(&self.filename)
-                .map_err(|e| Error::DeleteFile(e, self.filename.to_owned()))?;
-            file.unlock()
-                .map_err(|e| Error::UnlockFile(e, self.filename.to_owned()))?;
+        if !self.filename.exists() {
+            return Ok(());
         }
+
+        let file = lock_write(&self.filename)?;
+        std::fs::remove_file(&self.filename)
+            .map_err(|e| Error::DeleteFile(e, self.filename.to_owned()))?;
+        file.unlock()
+            .map_err(|e| Error::UnlockFile(e, self.filename.to_owned()))?;
+
         Ok(())
     }
 
     /// Returns a value or error if not found.
     async fn get(&self, key: &str) -> Result<String> {
-        let file = lock_read(&self.filename)?;
+        if !self.filename.exists() {
+            return Err(Error::FileMissing(self.filename.to_owned()));
+        }
 
         let mut value = String::default();
+        let file = lock_read(&self.filename)?;
+
         if let Ok(storage) = Storage::open(&self.filename) {
             value = storage.find_last(key)?;
         }
