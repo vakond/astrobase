@@ -50,8 +50,6 @@ pub enum Error {
     DeleteFile(#[source] std::io::Error, PathBuf),
     #[error("Cannot lock database file '{1}': {0}")]
     LockFile(#[source] std::io::Error, PathBuf),
-    #[error("Cannot unlock database file '{1}': {0}")]
-    UnlockFile(#[source] std::io::Error, PathBuf),
 
     #[error("Input/output error")]
     Io(#[from] std::io::Error),

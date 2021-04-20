@@ -31,9 +31,8 @@ impl super::Database for Persistent {
         let file = lock_write(&self.filename)?;
         std::fs::remove_file(&self.filename)
             .map_err(|e| Error::DeleteFile(e, self.filename.to_owned()))?;
-        file.unlock()
-            .map_err(|e| Error::UnlockFile(e, self.filename.to_owned()))?;
 
+        file.unlock()?;
         Ok(())
     }
 
@@ -53,9 +52,7 @@ impl super::Database for Persistent {
             return Err(Error::RecordMissing(key.into()));
         }
 
-        file.unlock()
-            .map_err(|e| Error::UnlockFile(e, self.filename.to_owned()))?;
-
+        file.unlock()?;
         Ok(value)
     }
 
@@ -75,9 +72,7 @@ impl super::Database for Persistent {
         let mut storage = Storage::open_w(&self.filename)?;
         storage.push(key, value)?;
 
-        file.unlock()
-            .map_err(|e| Error::UnlockFile(e, self.filename.to_owned()))?;
-
+        file.unlock()?;
         Ok(String::default())
     }
 
@@ -102,9 +97,7 @@ impl super::Database for Persistent {
         let mut storage = Storage::open_w(&self.filename)?;
         storage.mark_deleted(key)?;
 
-        file.unlock()
-            .map_err(|e| Error::UnlockFile(e, self.filename.to_owned()))?;
-
+        file.unlock()?;
         Ok(value)
     }
 
@@ -133,9 +126,7 @@ impl super::Database for Persistent {
         let mut storage = Storage::open_w(&self.filename)?;
         storage.push(key, value)?;
 
-        file.unlock()
-            .map_err(|e| Error::UnlockFile(e, self.filename.to_owned()))?;
-
+        file.unlock()?;
         Ok(String::default())
     }
 }
