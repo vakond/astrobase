@@ -25,7 +25,7 @@ pub trait Database: Send + Sync + 'static {
 
 use std::path::PathBuf;
 
-/// Represents errors.
+/// Represents database errors.
 #[derive(thiserror::Error, Debug)]
 pub enum Error {
     #[error("Record '{0}' is missing")]

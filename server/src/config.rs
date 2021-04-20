@@ -29,17 +29,26 @@ pub struct Astrobase {
 
 /// Implements construction of the config.
 impl Astrobase {
-    pub fn load(filename: &Path) -> Self {
-        let text = read(filename).expect("Cannot read the config file");
+    pub fn load(filename: &Path) -> Result<Self> {
+        let text = read(filename)?;
         let cfg: Astrobase =
-            serde_json::from_str(&text).expect("Invalid format of the config file");
-        cfg
+            serde_json::from_str(&text).map_err(|e| Error::Parse(e, filename.to_owned()))?;
+        Ok(cfg)
     }
 }
 
 /// Reads the main config from a file.
-fn read(filename: &Path) -> anyhow::Result<String> {
-    use anyhow::Context as _;
-    let text = format!("{:?}", filename);
-    Ok(std::fs::read_to_string(filename).context(text)?)
+fn read(filename: &Path) -> Result<String> {
+    Ok(std::fs::read_to_string(filename).map_err(|e| Error::Read(e, filename.to_owned()))?)
 }
+
+/// Represents config errors.
+#[derive(thiserror::Error, Debug)]
+pub enum Error {
+    #[error("Failed to read config '{1}': {0}")]
+    Read(#[source] std::io::Error, std::path::PathBuf),
+    #[error("Failed to parse config '{1}': {0}")]
+    Parse(#[source] serde_json::Error, std::path::PathBuf),
+}
+
+pub type Result<T> = std::result::Result<T, Error>;
