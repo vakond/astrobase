@@ -73,7 +73,7 @@ impl Storage {
 }
 
 /// Parses a string retrieving key and value.
-/// Returns None if another key found.
+/// Returns None if another key present.
 fn parse(record: &str, key: &str) -> Result<Option<String>> {
     let mut pair = record.split(SEP);
     let head = pair

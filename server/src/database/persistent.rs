@@ -45,9 +45,13 @@ impl super::Database for Persistent {
         let mut value = String::default();
         let file = lock_read(&self.filename)?;
 
-        if let Ok(storage) = Storage::open(&self.filename) {
-            value = storage.find_last(key)?;
+        // RAII block to close file
+        {
+            if let Ok(storage) = Storage::open(&self.filename) {
+                value = storage.find_last(key)?;
+            }
         }
+
         if value.is_empty() {
             return Err(Error::RecordMissing(key.into()));
         }
@@ -69,8 +73,11 @@ impl super::Database for Persistent {
             }
         }
 
-        let mut storage = Storage::open_w(&self.filename)?;
-        storage.push(key, value)?;
+        // RAII block to close file
+        {
+            let mut storage = Storage::open_w(&self.filename)?;
+            storage.push(key, value)?;
+        }
 
         file.unlock()?;
         Ok(String::default())
@@ -94,8 +101,11 @@ impl super::Database for Persistent {
             }
         };
 
-        let mut storage = Storage::open_w(&self.filename)?;
-        storage.mark_deleted(key)?;
+        // RAII block to close file
+        {
+            let mut storage = Storage::open_w(&self.filename)?;
+            storage.mark_deleted(key)?;
+        }
 
         file.unlock()?;
         Ok(value)
@@ -123,8 +133,11 @@ impl super::Database for Persistent {
             return Err(Error::RecordAlreadyExistsIdentical(key.into()));
         }
 
-        let mut storage = Storage::open_w(&self.filename)?;
-        storage.push(key, value)?;
+        // RAII block to close file
+        {
+            let mut storage = Storage::open_w(&self.filename)?;
+            storage.push(key, value)?;
+        }
 
         file.unlock()?;
         Ok(String::default())

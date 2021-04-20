@@ -59,7 +59,6 @@ function check_output {
 }
 
 function build {
-    echo
     echo "Building..."
     cargo build --quiet --release --no-default-features --features inmemory
     check_exit
