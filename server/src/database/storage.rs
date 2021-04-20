@@ -1,8 +1,6 @@
 //! astrobase-server persistent key-value database storage.
 
-use anyhow::{anyhow, Context as _};
 use std::fs::{File, OpenOptions};
-use std::io::{BufRead as _, BufReader, BufWriter, Write as _};
 use std::path::Path;
 
 const SEP: &str = "\t";
@@ -16,6 +14,7 @@ pub struct Storage {
 impl Storage {
     /// Opens the storage for reading only.
     pub fn open(filename: &Path) -> anyhow::Result<Self> {
+        use anyhow::Context as _;
         let text = format!("No such file {:?}", filename);
         let file = File::open(filename).context(text)?;
         Ok(Storage { file })
@@ -33,38 +32,36 @@ impl Storage {
     /// Searches the key and returns the value or empty string if not found.
     /// We have to scan the entire file because only the last record with given key is actual.
     pub fn find_last(&self, key: &str) -> anyhow::Result<String> {
+        use std::io::{BufRead as _, BufReader};
+
         let mut value = String::default();
         let reader = BufReader::new(&self.file);
         for line in reader.lines() {
-            let record = line?;
-            let mut parts = record.split(SEP);
-            let head = parts
-                .next()
-                .ok_or_else(|| anyhow!("Invalid record '{}'", record))?;
-            if head == key {
-                value = parts
-                    .next()
-                    .ok_or_else(|| anyhow!("Invalid record '{}'", record))?
-                    .into();
+            if let Some(v) = parse(&line?, key)? {
+                value = v;
             }
         }
+
         if value == DELETED {
             value.clear();
         }
         Ok(value)
     }
 
-    /// Appends new record to the end.
-    pub fn append(&mut self, key: &str, value: &str) -> anyhow::Result<String> {
+    /// Writes new record.
+    pub fn push(&mut self, key: &str, value: &str) -> anyhow::Result<String> {
+        use std::io::{BufWriter, Write as _};
+
         let mut writer = BufWriter::new(&self.file);
         writeln!(&mut writer, "{}{}{}", key, SEP, value)?;
         writer.flush()?;
+
         Ok(String::default())
     }
 
-    /// Appends new record with special value to mark a key as deleted.
+    /// Adds new record with special value to mark a key as deleted.
     pub fn mark_deleted(&mut self, key: &str) -> anyhow::Result<String> {
-        self.append(key, DELETED)
+        self.push(key, DELETED)
     }
 
     /// Collects garbage — removes duplicates and deleted records.
@@ -72,4 +69,22 @@ impl Storage {
     pub fn compact(&mut self) -> anyhow::Result<()> {
         unimplemented!()
     }
+}
+
+/// Parses a string retrieving key and value.
+/// Returns None if another key found.
+fn parse(record: &str, key: &str) -> anyhow::Result<Option<String>> {
+    use anyhow::anyhow;
+    let mut pair = record.split(SEP);
+    let head = pair
+        .next()
+        .ok_or_else(|| anyhow!("Invalid record '{}'", record))?;
+    if head == key {
+        return Ok(Some(
+            pair.next()
+                .ok_or_else(|| anyhow!("Invalid record '{}'", record))?
+                .into(),
+        ));
+    }
+    Ok(None)
 }

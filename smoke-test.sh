@@ -47,8 +47,8 @@ if [ $result -ne 0 ]; then
 fi
 
 echo
-echo "Waiting 5 seconds..."
-sleep 5s
+echo "Waiting 2 seconds..."
+sleep 2s
 echo "Stopping server..."
 killall $srv
 

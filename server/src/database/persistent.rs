@@ -61,7 +61,7 @@ impl super::Database for Persistent {
         }
 
         let mut storage = Storage::open_w(&self.filename)?;
-        storage.append(key, value)?;
+        storage.push(key, value)?;
 
         file.unlock()?;
         Ok(String::default())
@@ -117,7 +117,7 @@ impl super::Database for Persistent {
         }
 
         let mut storage = Storage::open_w(&self.filename)?;
-        storage.append(key, value)?;
+        storage.push(key, value)?;
 
         file.unlock()?;
         Ok(String::default())
