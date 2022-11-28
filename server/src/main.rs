@@ -2,6 +2,7 @@
 
 #![forbid(unsafe_code)]
 #![deny(warnings)]
+#![allow(clippy::derive_partial_eq_without_eq)]
 
 mod cli;
 mod config;

@@ -1,10 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Integration testing for astrobase-server with in-memory database.
 # Requires Rust installed.
 
 srv="astrobase-server"
 cli="cli"
-bin=./target/release
+bin="./target/release"
 cfg="/tmp/astrobase-integration-testing.json"
 out="/tmp/astrobase-server.out"
 

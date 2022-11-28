@@ -53,7 +53,7 @@ impl super::Database for InMemory {
         let value = table
             .remove(key)
             .ok_or_else(|| Error::RecordAlreadyMissing(key.into()))?;
-        Ok(value.clone())
+        Ok(value)
     }
 
     /// Updates record or returns error if the record was missing or identical.

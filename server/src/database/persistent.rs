@@ -11,6 +11,7 @@ use std::path::{Path, PathBuf};
 /// Represents the database internals.
 pub struct Persistent {
     filename: PathBuf,
+    //index: HashMap<String, u64>,
 }
 
 #[async_trait]
@@ -18,7 +19,8 @@ impl super::Database for Persistent {
     /// Construct new instance of the database.
     fn new() -> Self {
         Persistent {
-            filename: config::DEFAULT_STORAGE.into(),
+            filename: config::DEFAULT_DB.into(),
+            //index: HashMap::new(),
         }
     }
 
@@ -156,12 +158,12 @@ fn lock_read(filename: &Path) -> Result<FileLock> {
 
 /// Locks a file for reading or writing.
 fn lock_file(filename: &Path, is_writable: bool) -> Result<FileLock> {
-    Ok(FileLock::lock(
+    FileLock::lock(
         filename
             .to_str()
             .ok_or_else(|| Error::Filename(filename.into()))?,
         true,
         is_writable,
     )
-    .map_err(|e| Error::LockFile(e, filename.into()))?)
+    .map_err(|e| Error::LockFile(e, filename.into()))
 }

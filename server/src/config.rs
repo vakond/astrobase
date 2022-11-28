@@ -2,7 +2,8 @@
 
 pub const FAILURE: i32 = 1;
 pub const DEFAULT_CONFIG: &str = "astrobase.json";
-pub const DEFAULT_STORAGE: &str = "/tmp/astrobase.db";
+pub const DEFAULT_DB: &str = "/tmp/astrobase.db";
+//pub const DEFAULT_INDEX: &str = "/tmp/astrobase.idx";
 
 use serde::{Deserialize, Serialize};
 use std::path::Path;
@@ -39,7 +40,7 @@ impl Astrobase {
 
 /// Reads the main config from a file.
 fn read(filename: &Path) -> Result<String> {
-    Ok(std::fs::read_to_string(filename).map_err(|e| Error::Read(e, filename.to_owned()))?)
+    std::fs::read_to_string(filename).map_err(|e| Error::Read(e, filename.to_owned()))
 }
 
 /// Represents config errors.

@@ -41,8 +41,7 @@ pub async fn run(cfg: config::Astrobase) -> anyhow::Result<()> {
 /// Launches additional task which dumps the statistics regularly.
 fn start_monitoring(stats: Arc<RwLock<Stats>>, interval: Duration) {
     tokio::spawn(async move {
-        let interrupted = false;
-        while !interrupted {
+        loop {
             tokio::time::sleep(interval).await;
             stats.read().await.dump();
         }
