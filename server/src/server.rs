@@ -48,7 +48,7 @@ fn start_monitoring(stats: Arc<RwLock<Stats>>, interval: Duration) {
     });
 }
 
-/// Represents the gRPC service.
+/// Represents the `gRPC` service.
 struct Service<Db: Database> {
     db: Db,
     stats: Arc<RwLock<Stats>>,

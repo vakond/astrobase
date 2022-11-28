@@ -67,6 +67,7 @@ impl Storage {
 
     /// Collects garbage — removes duplicates and deleted records.
     #[allow(unused)]
+    #[allow(clippy::unused_self)]
     pub fn compact(&mut self) -> Result<()> {
         unimplemented!()
     }

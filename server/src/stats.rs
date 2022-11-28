@@ -14,9 +14,9 @@ impl Stats {
     /// Updates the GET stats.
     pub fn get(&mut self, ok: bool) {
         if ok {
-            self.get_ok_fail.0 += 1
+            self.get_ok_fail.0 += 1;
         } else {
-            self.get_ok_fail.1 += 1
+            self.get_ok_fail.1 += 1;
         }
     }
 
@@ -24,9 +24,9 @@ impl Stats {
     pub fn insert(&mut self, ok: bool) {
         if ok {
             self.number_of_records += 1;
-            self.insert_ok_fail.0 += 1
+            self.insert_ok_fail.0 += 1;
         } else {
-            self.insert_ok_fail.1 += 1
+            self.insert_ok_fail.1 += 1;
         }
     }
 
@@ -34,18 +34,18 @@ impl Stats {
     pub fn delete(&mut self, ok: bool) {
         if ok {
             self.number_of_records -= 1;
-            self.delete_ok_fail.0 += 1
+            self.delete_ok_fail.0 += 1;
         } else {
-            self.delete_ok_fail.1 += 1
+            self.delete_ok_fail.1 += 1;
         }
     }
 
     /// Updates the UPDATE stats.
     pub fn update(&mut self, ok: bool) {
         if ok {
-            self.update_ok_fail.0 += 1
+            self.update_ok_fail.0 += 1;
         } else {
-            self.update_ok_fail.1 += 1
+            self.update_ok_fail.1 += 1;
         }
     }
 

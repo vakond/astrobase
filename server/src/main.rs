@@ -2,7 +2,12 @@
 
 #![forbid(unsafe_code)]
 #![deny(warnings)]
+
+// For the generated code
 #![allow(clippy::derive_partial_eq_without_eq)]
+#![allow(clippy::too_many_lines)]
+#![allow(clippy::wildcard_imports)]
+#![allow(clippy::similar_names)]
 
 mod cli;
 mod config;
@@ -12,7 +17,7 @@ mod stats;
 
 fn main() {
     init_logger();
-    if let Err(err) = execute(cli::application()) {
+    if let Err(err) = execute(&cli::application()) {
         eprintln!("Error: {:#}", err);
         std::process::exit(config::FAILURE);
     }
@@ -27,7 +32,7 @@ fn init_logger() {
 }
 
 /// Dispatches CLI commands.
-fn execute(app: cli::Application) -> anyhow::Result<()> {
+fn execute(app: &cli::Application) -> anyhow::Result<()> {
     match app.cmd {
         cli::Command::Run => {
             let rt = tokio::runtime::Runtime::new()?;

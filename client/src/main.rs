@@ -2,7 +2,12 @@
 
 #![forbid(unsafe_code)]
 #![deny(warnings)]
+
+// For the generated code
 #![allow(clippy::derive_partial_eq_without_eq)]
+#![allow(clippy::too_many_lines)]
+#![allow(clippy::wildcard_imports)]
+#![allow(clippy::similar_names)]
 
 mod cli;
 mod command;

@@ -32,7 +32,7 @@ impl super::Database for Persistent {
 
         let file = lock_write(&self.filename)?;
         std::fs::remove_file(&self.filename)
-            .map_err(|e| Error::DeleteFile(e, self.filename.to_owned()))?;
+            .map_err(|e| Error::DeleteFile(e, self.filename.clone()))?;
 
         file.unlock()?;
         Ok(())
@@ -41,7 +41,7 @@ impl super::Database for Persistent {
     /// Returns a value or error if not found.
     async fn get(&self, key: &str) -> Result<String> {
         if !self.filename.exists() {
-            return Err(Error::FileMissing(self.filename.to_owned()));
+            return Err(Error::FileMissing(self.filename.clone()));
         }
 
         let mut value = String::default();
