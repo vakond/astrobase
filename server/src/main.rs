@@ -8,6 +8,7 @@
 #![allow(clippy::too_many_lines)]
 #![allow(clippy::wildcard_imports)]
 #![allow(clippy::similar_names)]
+#![allow(clippy::default_trait_access)]
 
 mod cli;
 mod config;
